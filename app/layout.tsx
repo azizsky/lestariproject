@@ -1,4 +1,4 @@
-import "./globals.css"; // <-- Pastikan baris ini ada!
+import "./global.css"; // <-- Pastikan baris ini ada!
 
 export default function RootLayout({
   children,

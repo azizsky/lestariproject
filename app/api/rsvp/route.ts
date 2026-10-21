@@ -36,29 +36,34 @@ async function queryRemoteD1(sql: string, params: any[] = []) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { invitationId, nama, kehadiran, pesan } = body;
+    
+    // Support kedua format parameter (camelCase / snake_case) agar fleksibel
+    const invitationId = body.invitation_id || body.invitationId;
+    const nama = body.nama;
+    const kehadiran = body.kehadiran || "Hadir";
+    const jumlahTamu = body.jumlah_tamu || body.jumlahTamu || 1;
+    const ucapan = body.ucapan || body.pesan || "-";
 
-    if (!invitationId || !nama || !kehadiran) {
+    if (!invitationId || !nama) {
       return NextResponse.json(
-        { success: false, message: "Data tidak lengkap (invitationId, nama, dan kehadiran wajib diisi)" },
+        { success: false, message: "Data tidak lengkap (invitation_id & nama wajib diisi)" },
         { status: 400 }
       );
     }
 
     const id = crypto.randomUUID();
-    const pesanClean = pesan ? pesan.trim() : "-";
 
-    // Simpan ke Database D1 (catatan: sesuaikan nama tabel jika menggunakan rsvp atau rsvps)
+    // Simpan ke D1
     const sql = `
-      INSERT INTO rsvps (id, invitation_id, nama, kehadiran, pesan)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO rsvps (id, invitation_id, nama, kehadiran, jumlah_tamu, ucapan, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, DATETIME('now'))
     `;
-    await queryRemoteD1(sql, [id, invitationId, nama, kehadiran, pesanClean]);
+    await queryRemoteD1(sql, [id, invitationId, nama, kehadiran, jumlahTamu, ucapan.trim()]);
 
     return NextResponse.json({
       success: true,
       message: "RSVP berhasil disimpan",
-      data: { id, invitationId, nama, kehadiran, pesan: pesanClean },
+      data: { id, invitationId, nama, kehadiran, jumlahTamu, ucapan },
     });
   } catch (error: any) {
     console.error("❌ [RSVP POST ERROR]:", error);
@@ -69,24 +74,25 @@ export async function POST(request: Request) {
   }
 }
 
-// GET: Ambil daftar ucapan/RSVP berdasarkan invitationId
+// GET: Ambil daftar ucapan berdasarkan invitation_id
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const invitationId = searchParams.get("invitationId");
+    // Support ?invitation_id=... maupun ?invitationId=...
+    const invitationId = searchParams.get("invitation_id") || searchParams.get("invitationId");
 
     if (!invitationId) {
       return NextResponse.json(
-        { success: false, message: "invitationId diperlukan" },
+        { success: false, message: "invitation_id diperlukan" },
         { status: 400 }
       );
     }
 
     const sql = `
-      SELECT id, nama, kehadiran, pesan, created_at 
+      SELECT id, nama, kehadiran, jumlah_tamu as jumlahTamu, ucapan, created_at 
       FROM rsvps 
       WHERE invitation_id = ? 
-      ORDER BY created_at DESC
+      ORDER BY id DESC LIMIT 50
     `;
     const rsvps = await queryRemoteD1(sql, [invitationId]);
 
