@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef, forwardRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toPng } from "html-to-image";
@@ -8,7 +8,6 @@ import FormBasicWedding from "@/components/admin/FormBasicWedding";
 import FormPremiumWedding from "@/components/admin/FormPremiumWedding";
 import FormEnterpriseWedding from "@/components/admin/FormEnterpriseWedding";
 import InvoiceReceipt from "./InvoiceReceipt";
-
 
 export default function ManageInvitationsPage() {
   const params = useParams();
@@ -63,19 +62,37 @@ export default function ManageInvitationsPage() {
     fetchInvitations();
   }, [fetchPackages, fetchInvitations]);
 
-  // Fungsi dinamis mengambil harga paket langsung dari tabel 'packages' DB D1
-  const getDynamicPackagePrice = (currentPkg: string) => {
-    const p = (currentPkg || "").toLowerCase();
-    const foundPkg = packagesList.find(
-      (item) => item.id?.toLowerCase() === p || item.nama_paket?.toLowerCase().includes(p)
-    );
-    if (foundPkg && foundPkg.harga) {
-      return Number(foundPkg.harga);
+  // FUNGSI PENCOCOKAN HARGA AKURAT & REAL-TIME
+ // FUNGSI PENCOCOKAN HARGA DENGAN CADANGAN (FALLBACK) AMAN
+  // FUNGSI AMBIL HARGA LANGSUNG DARI DATABASE BERDASARKAN ID PAKET
+  const getDynamicPackagePrice = (targetPkgName: string) => {
+    if (!targetPkgName) return 52000;
+
+    // Normalisasi teks target (misal "BASIC", "basic", "paket basic" -> "basic")
+    const cleanTarget = targetPkgName.toLowerCase().replace("paket", "").trim();
+
+    // Cari langsung di state packagesList berdasarkan id di database (basic, premium, exclusive)
+    const found = packagesList.find((p) => {
+      const dbId = (p.id || "").toLowerCase().trim();
+      const dbNama = (p.nama_paket || "").toLowerCase().replace("paket", "").trim();
+      return dbId === cleanTarget || dbNama.includes(cleanTarget);
+    });
+
+    // Jika ketemu dan harganya valid, kembalikan harga dari DB
+    if (found && found.harga !== undefined && found.harga !== null) {
+      return Number(found.harga);
     }
-    // Fallback harga jika DB belum ter-load
-    if (p.includes("premium")) return 89000;
-    if (p.includes("exclusive") || p.includes("enterprise")) return 120000;
+
+    // Jika belum sempat ter-load, gunakan fallback yang sesuai
+    if (cleanTarget.includes("premium")) return 90000;
+    if (cleanTarget.includes("exclusive") || cleanTarget.includes("enterprise")) return 120000;
     return 52000;
+  };
+
+  // Panggil fetchPackages sebelum membuka modal invoice agar data selalu paling baru
+  const handleOpenInvoice = async (item: any) => {
+    await fetchPackages();
+    setActiveInvoiceItem(item);
   };
 
   const handleDelete = async (id: string) => {
@@ -277,7 +294,7 @@ export default function ManageInvitationsPage() {
           </div>
         )}
 
-        {/* TABEL / DAFTAR UNDANGAN */}
+        {/* DAFTAR UNDANGAN (MOBILE CARDS & DESKTOP TABLE) */}
         <div className="bg-[#0e172a] border border-slate-800 rounded-xl overflow-hidden shadow-sm">
           {loading ? (
             <div className="p-8 text-center text-gray-400 text-sm">Memuat data undangan...</div>
@@ -287,7 +304,83 @@ export default function ManageInvitationsPage() {
             </div>
           ) : (
             <div>
-              {/* Desktop Table */}
+              {/* 1. MOBILE CARD VIEW */}
+              <div className="block md:hidden divide-y divide-slate-800">
+                {listUndangan.map((item) => {
+                  const tglAcara = item.tanggal_akad || item.tanggal_resepsi || item.created_at;
+                  const expiredDate = getExpiredDate(tglAcara, pkg);
+                  const isExpired = expiredDate ? new Date() > expiredDate : false;
+
+                  return (
+                    <div key={item.id} className="p-4 space-y-3">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="font-mono text-emerald-400 text-sm break-all">
+                          /wedding/{item.slug}
+                        </div>
+                        <div>
+                          {isExpired ? (
+                            <span className="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded font-bold uppercase">
+                              Expired
+                            </span>
+                          ) : (
+                            <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-bold uppercase">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-slate-400 grid grid-cols-2 gap-2 bg-slate-900/40 p-2.5 rounded-lg">
+                        <div>
+                          <span className="block text-[10px] uppercase text-slate-500 font-bold">Dibuat:</span>
+                          {formatDate(item.created_at)}
+                        </div>
+                        <div>
+                          <span className="block text-[10px] uppercase text-slate-500 font-bold">Berakhir:</span>
+                          {expiredDate ? formatDate(expiredDate.toISOString()) : "-"}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        <a
+                          href={`/wedding/${item.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded text-xs"
+                        >
+                          Preview ↗
+                        </a>
+                        <button
+                          onClick={() => handleOpenInvoice(item)}
+                          className="bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 px-2.5 py-1 rounded text-xs font-semibold"
+                        >
+                          📄 Invoice
+                        </button>
+                        <button
+                          onClick={() => handleCopyLink(item.slug)}
+                          className="bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 px-2.5 py-1 rounded text-xs"
+                        >
+                          Copy Link
+                        </button>
+                        <button
+                          onClick={() => handleEditClick(item)}
+                          className="bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 px-2.5 py-1 rounded text-xs"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="bg-red-500/10 text-red-400 hover:bg-red-500/20 px-2.5 py-1 rounded text-xs"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* 2. DESKTOP TABLE VIEW */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -339,7 +432,7 @@ export default function ManageInvitationsPage() {
                           </td>
                           <td className="p-4 text-right space-x-1.5">
                             <button
-                              onClick={() => setActiveInvoiceItem(item)}
+                              onClick={() => handleOpenInvoice(item)}
                               className="bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 px-2.5 py-1 rounded text-xs transition-all font-semibold"
                             >
                               📄 Invoice
@@ -391,24 +484,24 @@ export default function ManageInvitationsPage() {
               <div className="flex justify-center overflow-x-auto overflow-y-auto max-h-[75vh] bg-slate-900/50 p-4 rounded-xl border border-slate-800">
                 <div className="bg-white rounded-lg p-2 shadow-xl inline-block my-auto">
                   <InvoiceReceipt
-                    ref={receiptRef}
-                    data={{
-                      id: activeInvoiceItem.id,
-                      slug: activeInvoiceItem.slug,
-                      package: pkg,
-                      templateId: activeInvoiceItem.template_id,
-                      namaClient:
-                        activeInvoiceItem.nama_panggilan_pria && activeInvoiceItem.nama_panggilan_wanita
-                          ? `${activeInvoiceItem.nama_panggilan_pria} & ${activeInvoiceItem.nama_panggilan_wanita}`
-                          : activeInvoiceItem.slug,
-                      tanggalAcara: formatDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi),
-                      expiredDate: formatDate(
-                        getExpiredDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi, pkg)?.toISOString() || ""
-                      ),
-                      // SEKARANG HARGA DIAMBIL DINAMIS DARI D1 DB 'packages' (52000, 89000, 120000, dll)
-                      harga: getDynamicPackagePrice(pkg),
-                    }}
-                  />
+  ref={receiptRef}
+  data={{
+    id: activeInvoiceItem.id,
+    slug: activeInvoiceItem.slug,
+    package: activeInvoiceItem.package || pkg,
+    templateId: activeInvoiceItem.template_id,
+    namaClient:
+      activeInvoiceItem.nama_panggilan_pria && activeInvoiceItem.nama_panggilan_wanita
+        ? `${activeInvoiceItem.nama_panggilan_pria} & ${activeInvoiceItem.nama_panggilan_wanita}`
+        : activeInvoiceItem.slug,
+    tanggalAcara: formatDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi),
+    expiredDate: formatDate(
+      getExpiredDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi, activeInvoiceItem.package || pkg)?.toISOString() || ""
+    ),
+    // Pastikan ini memanggil activeInvoiceItem.package
+    harga: getDynamicPackagePrice(activeInvoiceItem.package || pkg),
+  }}
+/>
                 </div>
               </div>
 

@@ -37,9 +37,9 @@ async function executeD1(sql: string, params: any[] = []) {
         body: JSON.stringify({ sql, params }),
       }
     );
-    const data = await res.json();
-    if (data.success && data.result?.[0]) {
-      return data.result[0].results || true;
+    const responseData = await res.json();
+    if (responseData.success && responseData.result?.[0]) {
+      return responseData.result[0].results || true;
     }
   }
   return null;
@@ -49,7 +49,7 @@ async function executeD1(sql: string, params: any[] = []) {
 export async function GET() {
   try {
     const sql = "SELECT id, nama_paket, harga, deskripsi, fitur FROM packages ORDER BY harga ASC";
-    const data = await executeD1(sql);
+    const resultData = await executeD1(sql);
 
     const mockPackages = [
       {
@@ -68,9 +68,12 @@ export async function GET() {
       },
     ];
 
+    const finalPackages = resultData && Array.isArray(resultData) && resultData.length > 0 ? resultData : mockPackages;
+
     return NextResponse.json({
       success: true,
-      packages: data && Array.isArray(data) && data.length > 0 ? data : mockPackages,
+      data: finalPackages,       // Mendukung jika frontend memanggil data.data
+      packages: finalPackages,   // Mendukung jika frontend memanggil data.packages
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
