@@ -1,6 +1,8 @@
+"use client";
+
 import { forwardRef } from "react";
 
-export const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
+const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
   const today = new Date();
   const dueDate = new Date();
   dueDate.setDate(today.getDate() + 3);
@@ -125,3 +127,5 @@ export const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) =>
 });
 
 InvoiceReceipt.displayName = "InvoiceReceipt";
+
+export default InvoiceReceipt;
