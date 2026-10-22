@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "next/navigation"; // Jika pakai next/router atau next/link, sesuaikan dengan aslinya
 import { useRouter } from "next/navigation";
 
 export default function AdminDashboardPage() {
@@ -38,10 +38,16 @@ export default function AdminDashboardPage() {
       icon: "📖",
     },
     {
-      id: "templates",
+      id: "kelolatemplate",
       title: "Kelola Template",
       desc: "Pilih dan ubah desain atau tema yang digunakan setiap undangan.",
       icon: "🎨",
+    },
+    {
+      id: "packages",
+      title: "Kelola Paket & Harga",
+      desc: "Atur daftar paket langganan (Basic, Premium, dll) beserta harganya.",
+      icon: "💎",
     },
   ];
 
@@ -74,22 +80,24 @@ export default function AdminDashboardPage() {
               targetRoute = "/admin/dashboard/songs";
             } else if (cat.id === "bukutamu") {
               targetRoute = "/admin/dashboard/bukutamu";
-            } else if (cat.id === "templates") {
+            } else if (cat.id === "kelolatemplate") {
               targetRoute = "/admin/dashboard/kelolatemplate";
+            } else if (cat.id === "packages") {
+              targetRoute = "/admin/dashboard/packages";
             }
 
             return (
-              <Link
+              <a
                 key={cat.id}
                 href={targetRoute}
-                className="bg-[#0e172a] border border-slate-800 rounded-xl p-6 hover:border-blue-500 transition-all flex flex-col items-center text-center group cursor-pointer"
+                className="bg-[#0e172a] border border-slate-800 rounded-xl p-6 hover:border-emerald-500 transition-all flex flex-col items-center text-center group cursor-pointer"
               >
                 <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
                   {cat.icon}
                 </div>
                 <h2 className="text-xl font-bold mb-2">{cat.title}</h2>
                 <p className="text-sm text-gray-400">{cat.desc}</p>
-              </Link>
+              </a>
             );
           })}
         </div>
