@@ -22,6 +22,34 @@ export interface XtraDataProps {
   rekening?: Array<{ bank: string; nomor: string; atasNama: string }>;
   musikUrl?: string;
 }
+
+export interface XtraDataProps {
+  templateId?: string;
+
+  packageType?: "basic" | "premium" | "exclusive";
+  namaPria?: string;
+  namaWanita?: string;
+  ortuaPria?: string;
+  ortuaWanita?: string;
+  turutMengundang?: string[];
+  tanggal?: string;
+  tanggalAkad?: string;
+  tanggalResepsi?: string;
+  lokasiAkad?: string;
+  lokasiResepsi?: string;
+  quote?: string;
+  coverFoto?: string;
+  fotoPria?: string;
+  fotoWanita?: string;
+  galeriFoto?: string[];
+  loveStory?: Array<{ year: string; title: string; story: string }>;
+  videoUrl?: string;
+  googleMapsUrl?: string;
+  alamatLengkap?: string;
+  rekening?: Array<{ bank: string; nomor: string; atasNama: string }>;
+  musikUrl?: string;
+}
+
 export interface InvitationData {
   id: string | number;
   nama_pria?: string;
