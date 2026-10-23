@@ -21,7 +21,7 @@ const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
       <div className="flex justify-between items-start mb-5">
         <div>
           <h1 className="text-2xl font-black text-blue-600 tracking-tight">Digital Invoice</h1>
-          <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">Zpack Printing & Packaging</p>
+          <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">Lestari Project Digital Invivation</p>
         </div>
         <div className="text-right">
           <span className="inline-block bg-amber-100 text-amber-800 font-bold text-[10px] px-2.5 py-0.5 rounded tracking-wide uppercase">
@@ -37,14 +37,14 @@ const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
       <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-slate-200">
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">FROM (PENGIRIM)</p>
-          <p className="font-bold text-slate-900 text-xs">Zpack Printing & Packaging</p>
-          <p className="text-slate-500 text-[10px] leading-tight">Pangalengan, Kab. Bandung, Jawa Barat</p>
-          <p className="text-slate-400 text-[10px] mt-0.5">Website: www.zpack.my.id</p>
+          <p className="font-bold text-slate-900 text-xs">Lestari Project</p>
+          <p className="text-slate-500 text-[10px] leading-tight">jl.pagarsih 143B. Bandung, Jawa Barat</p>
+          <p className="text-slate-400 text-[10px] mt-0.5">Website: www.lestariproject.my.id</p>
         </div>
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">TO (KLIEN)</p>
-          <p className="font-bold text-slate-900 text-xs capitalize">{data.namaClient || "Klien Zpack"}</p>
-          <p className="text-blue-600 font-mono text-[10px] truncate">zpack.my.id/wedding/{data.slug}</p>
+          <p className="font-bold text-slate-900 text-xs capitalize">{data.namaClient || "Klien lestariproject"}</p>
+          <p className="text-blue-600 font-mono text-[10px] truncate">lestariproject.my.id/wedding/{data.slug}</p>
           <p className="text-slate-400 text-[10px] mt-0.5">ID: <span className="font-mono">{data.id}</span></p>
         </div>
       </div>
@@ -97,7 +97,7 @@ const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
           <span className="font-medium text-slate-800">Rp {data.harga?.toLocaleString("id-ID")}</span>
         </div>
         <div className="flex justify-between text-slate-500 text-[11px]">
-          <span>Pajak (0%)</span>
+          <span>Pajak ppn (0%)</span>
           <span className="font-medium text-slate-800">Rp 0</span>
         </div>
         <div className="flex justify-between text-xs font-black text-slate-900 border-t border-slate-100 pt-1.5">
@@ -109,14 +109,14 @@ const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
       {/* INSTRUKSI PEMBAYARAN */}
       <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-2.5 text-[10px] text-slate-600 space-y-0.5 mb-4">
         <p className="font-bold text-slate-800 uppercase tracking-wider text-[9px]">PAYMENT INSTRUCTIONS</p>
-        <p>Silakan transfer tagihan ke <span className="font-bold text-slate-800">Bank BCA: 123-456-7890</span> (A/N Zpack Printing).</p>
-        <p className="text-slate-500">Kirimkan bukti konfirmasi transfer melalui WhatsApp Admin Zpack.</p>
+        <p>Silakan transfer tagihan ke <span className="font-bold text-slate-800">Bank BCA: 8380431662</span> (A/N novi dwi lestari).</p>
+        <p className="text-slate-500">Kirimkan bukti konfirmasi transfer melalui WhatsApp Admin.</p>
       </div>
 
       {/* FOOTER & COPYRIGHT */}
       <div className="text-center text-[9px] text-slate-400 border-t border-slate-100 pt-2 tracking-wider space-y-0.5">
-        <p className="font-medium uppercase">Thank you for choosing Zpack — www.zpack.my.id</p>
-        <p className="text-[8px] text-slate-300">Copyright © 2026 Zpack Printing & Packaging. All rights reserved.</p>
+        <p className="font-medium uppercase">Thank you for choosing Lestari Project — www.lestariproject.my.id</p>
+        <p className="text-[8px] text-slate-300">Copyright © 2026 lestari project. All rights reserved.</p>
       </div>
     </div>
   );

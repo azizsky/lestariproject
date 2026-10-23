@@ -28,7 +28,7 @@ export async function GET() {
       const publicDomain =
         env.R2_PUBLIC_DOMAIN ||
         process.env.R2_PUBLIC_DOMAIN ||
-        "https://assets.zpack.my.id";
+        "https://assets.lestariproject.my.id";
 
       const listed = await bucket.list({ prefix: "preset-music/" });
       const objects = listed?.objects || [];
@@ -60,7 +60,7 @@ export async function GET() {
     const publicDomain =
       process.env.R2_PUBLIC_DOMAIN ||
       process.env.R2_PUBLIC_URL ||
-      "https://assets.zpack.my.id";
+      "https://assets.lestariproject.my.id";
 
     if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
       return NextResponse.json(

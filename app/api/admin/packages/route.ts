@@ -6,7 +6,7 @@ async function executeD1(sql: string, params: any[] = []) {
   let db: any = null;
   try {
     const { env } = getCloudflareContext();
-    db = (env as any)?.DB || (env as any)?.zpack_db;
+    db = (env as any)?.DB || (env as any)?.lestari_db;
   } catch {
     db = null;
   }

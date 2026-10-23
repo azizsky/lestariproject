@@ -13,10 +13,10 @@ export async function GET() {
       db = null;
     }
 
-    // 2. Jika DB terhubung (Production / Wrangler Pages Dev)
+    // 2. Jika DB terhubung
     if (db) {
       const query = `
-        SELECT id, slug, category, package, status, nama_panggilan, created_at 
+        SELECT id, slug, category, package, status, nama_panggilan_pria, created_at 
         FROM invitations 
         WHERE LOWER(package) NOT LIKE '%basic%' AND status = 'active'
         ORDER BY id DESC
@@ -29,40 +29,13 @@ export async function GET() {
       });
     }
 
-    // 3. Fallback jika D1 belum terhubung di 'npm run dev' biasa (Lokal Development)
-    console.warn("⚠️ Mode Lokal Dev: Binding D1 tidak ditemukan, menampilkan data dummy dari D1 Studio.");
-    
-    const mockInvitationsFromD1 = [
-      {
-        id: "1791133021855",
-        slug: "elisa-rangga",
-        category: "wedding",
-        package: "premium",
-        status: "active",
-        nama_panggilan: "rangga",
-      },
-      {
-        id: "1791133255829",
-        slug: "sarah-vivaldi",
-        category: "wedding",
-        package: "enterprise",
-        status: "active",
-        nama_panggilan: "Vivaldi",
-      },
-      {
-        id: "1791149990416",
-        slug: "latif-nanda",
-        category: "wedding",
-        package: "enterprise",
-        status: "active",
-        nama_panggilan: "Latif",
-      },
-    ];
-
+    // 3. Jika D1 tidak terhubung (misal di local dev tanpa wrangler binding), kembalikan kosong
+    console.warn("⚠️ Mode Lokal Dev: Binding D1 tidak ditemukan.");
     return NextResponse.json({
       success: true,
-      invitations: mockInvitationsFromD1,
+      invitations: [],
     });
+
   } catch (error: any) {
     console.error("❌ Error Query D1 Bukutamu:", error);
     return NextResponse.json(

@@ -153,7 +153,7 @@ export default function ManageInvitationsPage() {
         });
 
         const link = document.createElement("a");
-        link.download = `invoice-zpack-${activeInvoiceItem?.slug || "undangan"}.png`;
+        link.download = `invoice-LestariProject-${activeInvoiceItem?.slug || "undangan"}.png`;
         link.href = dataUrl;
         link.click();
       } catch (err) {
@@ -169,7 +169,7 @@ export default function ManageInvitationsPage() {
     setEditingId(item.id);
     setInitialData({
       slug: item.slug,
-      templateId: item.template_id || "theme-minimalist",
+      templateId: item.template_id || "",
       namaPanggilanPria: item.nama_panggilan_pria || "",
       namaPanggilanWanita: item.nama_panggilan_wanita || "",
       namaLengkapPria: item.nama_lengkap_pria || "",

@@ -308,7 +308,7 @@ export default function KelolaTemplatePage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="https://assets.zpack.my.id/..."
+                  placeholder="https://assets.lestariproject.my.id/..."
                   value={formData.thumbnail_url}
                   onChange={(e) => setFormData({ ...formData, thumbnail_url: e.target.value })}
                   className="w-full px-3 py-2 bg-[#070d19] border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-purple-500 transition-all font-mono"

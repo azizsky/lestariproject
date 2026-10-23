@@ -57,13 +57,13 @@ export async function GET() {
         id: "theme-luxury",
         nama_template: "Luxury Gold",
         deskripsi: "Tema mewah dengan sentuhan warna emas dan klasik.",
-        thumbnail_url: "https://assets.zpack.my.id/thumnail-template/luxury.jpg",
+        thumbnail_url: "https://assets.lestariproject.my.id/thumnail-template/luxury.jpg",
       },
       {
         id: "theme-white-rose",
         nama_template: "White Rose Elegant",
         deskripsi: "Tema romantis dan anggun dengan nuansa mawar putih.",
-        thumbnail_url: "https://assets.zpack.my.id/thumnail-template/white-rose.jpg",
+        thumbnail_url: "https://assets.lestariproject.my.id/thumnail-template/white-rose.jpg",
       },
     ];
 
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
 
           return NextResponse.json({
             success: true,
-            url: `https://assets.zpack.my.id/${fileName}`,
+            url: `https://assets.lestariproject.my.id/${fileName}`,
             message: "Upload gambar berhasil via R2 Binding",
           });
         }
@@ -157,7 +157,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
           success: true,
-          url: `https://assets.zpack.my.id/${fileName}`,
+          url: `https://assets.lestariproject.my.id/${fileName}`,
           message: "Upload gambar berhasil via S3 Client",
         });
       } catch (uploadErr: any) {

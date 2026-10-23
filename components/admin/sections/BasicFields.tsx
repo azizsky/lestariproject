@@ -171,7 +171,7 @@ export default function BasicFields({
             name="slug"
             value={formData.slug}
             onChange={onChange}
-            placeholder="aziz-partner"
+            placeholder="romeo-verona"
             required
             className="w-full bg-transparent px-3 py-2 text-sm text-slate-200 focus:outline-none"
           />
@@ -189,7 +189,7 @@ export default function BasicFields({
             name="namaPanggilanPria"
             value={formData.namaPanggilanPria}
             onChange={onChange}
-            placeholder="Aziz"
+            placeholder="Romeo"
             required
             className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
           />
@@ -203,7 +203,7 @@ export default function BasicFields({
             name="namaPanggilanWanita"
             value={formData.namaPanggilanWanita}
             onChange={onChange}
-            placeholder="Partner"
+            placeholder="verona"
             required
             className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
           />
@@ -214,14 +214,14 @@ export default function BasicFields({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-medium text-slate-300">
-            4. Nama Lengkap Pria
+            4. Nama Lengkap Pengantin Pria
           </label>
           <input
             type="text"
             name="namaLengkapPria"
             value={formData.namaLengkapPria}
             onChange={onChange}
-            placeholder="Asep Saepul Aziz, S.Kom."
+            placeholder="Romeo Montagoue, S.Hi."
             required
             className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
           />
@@ -235,7 +235,7 @@ export default function BasicFields({
             name="namaLengkapWanita"
             value={formData.namaLengkapWanita}
             onChange={onChange}
-            placeholder="Nama Lengkap Wanita, S.Tr."
+            placeholder="Verona Monica, S.Pd."
             required
             className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
           />

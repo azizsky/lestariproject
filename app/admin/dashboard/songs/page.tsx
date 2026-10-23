@@ -20,6 +20,16 @@ export default function SongsManagementPage() {
   // Menyimpan referensi semua elemen audio agar bisa dikontrol (pause otomatis)
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement | null }>({});
 
+  // Helper untuk memastikan URL audio selalu memiliki protokol https:// yang valid
+  const formatAudioUrl = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    // Jika tidak ada protokol, paksa tambahkan domain R2 assets
+    return `https://${url.replace(/^\/+/, "")}`;
+  };
+
   // 1. Fetch Daftar Lagu dari R2
   const fetchSongs = async () => {
     try {
@@ -27,7 +37,12 @@ export default function SongsManagementPage() {
       const res = await fetch("/api/admin/songs");
       const data = await res.json();
       if (data.success) {
-        setSongList(data.songs);
+        // Pastikan setiap URL lagu diformat dengan benar
+        const formattedSongs = data.songs.map((song: SongItem) => ({
+          ...song,
+          url: formatAudioUrl(song.url),
+        }));
+        setSongList(formattedSongs);
       }
     } catch (err) {
       console.error("Gagal memuat lagu:", err);
@@ -216,6 +231,7 @@ export default function SongsManagementPage() {
               ) : (
                 songList.map((song) => {
                   const displayName = song.filename.replace(/^\d+-/, "");
+                  const validUrl = formatAudioUrl(song.url);
 
                   return (
                     <div
@@ -243,7 +259,7 @@ export default function SongsManagementPage() {
                           audioRefs.current[song.key] = el;
                         }}
                         onPlay={() => handlePlayAudio(song.key)}
-                        src={song.url}
+                        src={validUrl}
                         controls
                         className="w-full h-8 rounded-lg outline-none"
                       />

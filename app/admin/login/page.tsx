@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
             🔒
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">
-            Zpack Admin
+            lestari project digital invitation Admin
           </h1>
           <p className="mt-1 text-xs text-slate-400">
             Masuk untuk mengelola sistem undangan
@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="mt-8 text-center text-[11px] text-slate-500">
-          Zpack Digital Invitation System &copy; 2026
+          AszTeam Digital Invitation System &copy; 2026
         </div>
       </div>
     </div>

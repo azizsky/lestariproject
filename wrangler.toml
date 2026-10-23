@@ -1,12 +1,12 @@
-name = "zpack-digital-invitation"
+name = "lestariproject-digital-invitation"
 compatibility_date = "2026-09-23"
 pages_build_output_dir = ".vercel/output/static"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "zpack-db"
-database_id = "5a14776e-fe54-4a8f-99b4-97a35542b35d"
+database_name = "lestari-db"
+database_id = "a6095a01-4688-4a7d-9716-e79ba6d0188a"
 
 [[r2_buckets]]
 binding = "MY_BUCKET"
-bucket_name = "zpack"
+bucket_name = "lestari"

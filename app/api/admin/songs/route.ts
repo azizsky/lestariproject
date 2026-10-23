@@ -14,7 +14,7 @@ function getS3Client() {
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  const bucketName = process.env.R2_BUCKET_NAME || "zpack";
+  const bucketName = process.env.R2_BUCKET_NAME || "lestari";
 
   if (!accountId || !accessKeyId || !secretAccessKey) {
     return null;
@@ -32,7 +32,7 @@ function getS3Client() {
   return { s3, bucketName };
 }
 
-const PUBLIC_DOMAIN = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "https://assets.zpack.my.id";
+const PUBLIC_DOMAIN = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "https://assets.lestariproject.my.id";
 
 // ----------------------------------------------------
 // 1. GET: Ambil Daftar Lagu dari R2 (preset-music/)
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
           key,
           filename: key.replace(MUSIC_PREFIX, ""),
           title: customTitle || file.name,
-          url: `https://zpack.my.id/${key}`,
+          url: `${PUBLIC_DOMAIN}/${key}`, // Diperbaiki menggunakan PUBLIC_DOMAIN
         },
       });
     }
@@ -177,7 +177,7 @@ export async function POST(request: Request) {
         key,
         filename: key.replace(MUSIC_PREFIX, ""),
         title: customTitle || file.name,
-        url: `https://zpack.my.id/${key}`,
+        url: `https://lestariproject.my.id/${key}`,
       },
     });
   } catch (error: any) {
