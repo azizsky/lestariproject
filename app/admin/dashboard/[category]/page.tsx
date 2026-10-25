@@ -24,7 +24,7 @@ export default function SelectPackagePage() {
     },
     {
       id: "enterprise",
-      name: "Enterprise",
+      name: "exclusive",
       badge: "PAKET 03",
       desc: "Premium + Buku Tamu/Ucapan, RSVP Kehadiran, & Live Streaming.",
       color: "border-purple-500 text-purple-400",

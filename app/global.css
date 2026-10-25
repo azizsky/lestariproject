@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+/* Mengaktifkan dark mode berbasis class (untuk toggle manual 🌙/☀️) */
+@variant dark (&:where(.dark, .dark *));
+
+/* Tambahan custom styling atau transisi halus jika diperlukan */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -204,34 +204,38 @@ export async function GET(request: Request) {
 // 2. DELETE: Hapus Undangan berdasarkan ID
 // ====================================================================
 
+
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+    console.log("🟢 Menerima request delete untuk ID:", id);
 
     if (!id) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "ID wajib diisi untuk menghapus!",
-        },
+        { success: false, message: "ID wajib diisi untuk menghapus!" },
         { status: 400 }
       );
     }
 
-    // 1. Cek slug undangan untuk pembersihan R2
-    const targetData = await executeQuery(
-      "SELECT slug FROM invitations WHERE id = ?",
-      [id]
-    );
+    // 1. Cek slug undangan untuk pembersihan R2 (Gunakan try-catch terpisah agar tidak memutus fungsi utama jika gagal)
+    try {
+      const targetData = await executeQuery(
+        "SELECT slug FROM invitations WHERE id = ?",
+        [id]
+      );
 
-    if (targetData && targetData.length > 0) {
-      await cleanupR2Folder(targetData[0].slug);
+      if (targetData && targetData.length > 0 && targetData[0].slug) {
+        await cleanupR2Folder(targetData[0].slug);
+      }
+    } catch (r2Err) {
+      console.warn("⚠️ Warning R2 Cleanup:", r2Err);
+      // Lanjutkan proses hapus database walau R2 gagal/bersih-bersih error
     }
 
     // 2. Hapus dulu semua pesan & konfirmasi di tabel rsvp
     await executeQuery(
-      "DELETE FROM rsvp WHERE invitation_id = ?",
+      "DELETE FROM rsvps WHERE invitation_id = ?",
       [id]
     );
 
@@ -241,15 +245,20 @@ export async function DELETE(request: Request) {
       [id]
     );
 
+    // ✅ WAJIB ADA: Return response sukses di akhir jalur sukses
     return NextResponse.json({
       success: true,
       message: "Undangan, data RSVP, dan file terkait berhasil dihapus!",
     });
+
   } catch (error: any) {
+    console.error("🔴 Error API Delete:", error);
+    
+    // ✅ WAJIB ADA: Return response error di blok catch agar tidak memicu error 500 "No response returned"
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Gagal menghapus",
+        message: error.message || "Gagal menghapus undangan dari database",
       },
       { status: 500 }
     );
@@ -275,8 +284,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Slug dan data undangan wajib diisi!",
+          message: "Slug dan data undangan wajib diisi!",
         },
         { status: 400 }
       );
@@ -302,7 +310,7 @@ export async function POST(request: Request) {
 
     const id = Date.now().toString();
 
-    // Ekstraksi fitur tambahan (whatsappPengantin & enableWaNotification diabaikan/dihapus)
+    // Ekstraksi fitur tambahan
     const {
       musicOption,
       customMusicUrl,
@@ -316,11 +324,14 @@ export async function POST(request: Request) {
       ...basic
     } = content;
 
-    // Susun XtraData tanpa WhatsApp
+    // Pastikan jika paket 'basic', enableRsvp otomatis false
+    const isRsvpEnabled = pkg === "basic" ? false : (enableRsvp ?? true);
+
+    // Susun XtraData
     const xtraData = JSON.stringify({
       musicOption: musicOption || "none",
       customMusicUrl: customMusicUrl || "",
-      enableRsvp: enableRsvp ?? true,
+      enableRsvp: isRsvpEnabled, // <--- Menggunakan variabel pengaman paket basic
       liveStreamUrl: liveStreamUrl || "",
       videoPrewedUrl: videoPrewedUrl || "",
       galeriFoto: galeriFoto || [],
@@ -329,6 +340,7 @@ export async function POST(request: Request) {
       rekeningBank: rekeningBank || [],
     });
 
+    // 1. Tambahkan created_at ke dalam kolom INSERT dan berikan nilai CURRENT_TIMESTAMP
     const insertQuery = `
       INSERT INTO invitations (
         id, slug, category, package, status, template_id,
@@ -338,8 +350,8 @@ export async function POST(request: Request) {
         turut_mengundang_pria, turut_mengundang_wanita,
         tanggal_akad, waktu_akad,
         tanggal_resepsi, waktu_resepsi,
-        lokasi_teks, lokasi_maps, xtra_data
-      ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        lokasi_teks, lokasi_maps, xtra_data, created_at
+      ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `;
 
     const insertParams = [
@@ -363,6 +375,7 @@ export async function POST(request: Request) {
       basic.lokasiTeks || "",
       basic.lokasiMaps || "",
       xtraData,
+      // created_at diisi otomatis lewat CURRENT_TIMESTAMP di SQL, jadi parameter di array dihapus
     ];
 
     await executeQuery(insertQuery, insertParams);
@@ -424,11 +437,14 @@ export async function PUT(request: Request) {
       ...basic
     } = content;
 
-    // Susun XtraData tanpa WhatsApp
+    // Pastikan jika paket 'basic', enableRsvp otomatis false saat update
+    const isRsvpEnabled = pkg === "basic" ? false : (enableRsvp ?? true);
+
+    // Susun XtraData
     const xtraData = JSON.stringify({
       musicOption: musicOption || "none",
       customMusicUrl: customMusicUrl || "",
-      enableRsvp: enableRsvp ?? true,
+      enableRsvp: isRsvpEnabled, // <--- Menggunakan variabel pengaman paket basic
       liveStreamUrl: liveStreamUrl || "",
       videoPrewedUrl: videoPrewedUrl || "",
       galeriFoto: galeriFoto || [],

@@ -132,7 +132,7 @@ export default function ManageInvitationsPage() {
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+    return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "numeric", year: "numeric" });
   };
 
   const handleDownloadInvoice = async () => {
@@ -484,24 +484,24 @@ export default function ManageInvitationsPage() {
               <div className="flex justify-center overflow-x-auto overflow-y-auto max-h-[75vh] bg-slate-900/50 p-4 rounded-xl border border-slate-800">
                 <div className="bg-white rounded-lg p-2 shadow-xl inline-block my-auto">
                   <InvoiceReceipt
-  ref={receiptRef}
-  data={{
-    id: activeInvoiceItem.id,
-    slug: activeInvoiceItem.slug,
-    package: activeInvoiceItem.package || pkg,
-    templateId: activeInvoiceItem.template_id,
-    namaClient:
-      activeInvoiceItem.nama_panggilan_pria && activeInvoiceItem.nama_panggilan_wanita
-        ? `${activeInvoiceItem.nama_panggilan_pria} & ${activeInvoiceItem.nama_panggilan_wanita}`
-        : activeInvoiceItem.slug,
-    tanggalAcara: formatDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi),
-    expiredDate: formatDate(
-      getExpiredDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi, activeInvoiceItem.package || pkg)?.toISOString() || ""
-    ),
-    // Pastikan ini memanggil activeInvoiceItem.package
-    harga: getDynamicPackagePrice(activeInvoiceItem.package || pkg),
-  }}
-/>
+                    ref={receiptRef}
+                    data={{
+                      id: activeInvoiceItem.id,
+                      slug: activeInvoiceItem.slug,
+                      package: activeInvoiceItem.package || pkg,
+                      templateId: activeInvoiceItem.template_id,
+                      namaClient:
+                        activeInvoiceItem.nama_panggilan_pria && activeInvoiceItem.nama_panggilan_wanita
+                          ? `${activeInvoiceItem.nama_panggilan_pria} & ${activeInvoiceItem.nama_panggilan_wanita}`
+                          : activeInvoiceItem.slug,
+                      tanggalAcara: formatDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi),
+                      expiredDate: formatDate(
+                        getExpiredDate(activeInvoiceItem.tanggal_akad || activeInvoiceItem.tanggal_resepsi, activeInvoiceItem.package || pkg)?.toISOString() || ""
+                      ),
+                      // Pastikan ini memanggil activeInvoiceItem.package
+                      harga: getDynamicPackagePrice(activeInvoiceItem.package || pkg),
+                    }}
+                  />
                 </div>
               </div>
 

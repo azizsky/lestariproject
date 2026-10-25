@@ -462,7 +462,7 @@ export default function FormEnterpriseWedding({ onSubmit, initialData }: FormEnt
           </h3>
         </div>
         <p className="text-xs text-slate-400 mt-0.5">
-          Konfigurasi lengkap tingkat lanjut dengan fitur WhatsApp Kontak, RSVP, Live Streaming, Video Embed/MP4, Musik, dan Love Story.
+          Konfigurasi lengkap tingkat lanjut dengan fitur  RSVP, Live Streaming, Video Embed/MP4, Musik, dan Love Story.
         </p>
       </div>
 

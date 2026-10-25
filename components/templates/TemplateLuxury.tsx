@@ -130,7 +130,7 @@ export default function TemplateLuxury({ invitation, xtraData }: WeddingProps) {
   const customMusicUrl = (extra as any)?.customMusicUrl;
   const musicOption = (extra as any)?.musicOption;
   const defaultMusicUrl = (invitation as any)?.music_url;
-
+  const invitationPackage = (invitation as any)?.package || "basic";
   let musikUrl = "";
 
   if (customMusicUrl && customMusicUrl.trim() !== "") {
@@ -271,7 +271,7 @@ export default function TemplateLuxury({ invitation, xtraData }: WeddingProps) {
         <main className="animate-fade-in relative pb-16">
           
           {/* TOMBOL MUTE / UNMUTE MUSIK MELAYANG */}
-          {musikUrl && (
+          {musikUrl && invitationPackage !== "basic" && (
             <button
               onClick={toggleMusic}
               className="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-[#111111]/90 border border-[#e6ca65]/50 text-[#e6ca65] shadow-lg shadow-black/80 hover:scale-110 active:scale-95 transition-all flex items-center justify-center backdrop-blur-md cursor-pointer"

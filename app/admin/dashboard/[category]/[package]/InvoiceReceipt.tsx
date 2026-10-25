@@ -28,7 +28,7 @@ const InvoiceReceipt = forwardRef<HTMLDivElement, any>(({ data }, ref) => {
             UNPAID (MENUNGGU PEMBAYARAN)
           </span>
           <p className="text-[11px] font-mono text-slate-600 font-bold mt-1">
-            #ZP-{data.id?.substring(data.id.length - 6) || "8892"}
+            #LSTRP-{data.id?.substring(data.id.length - 6) || "8892"}
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "assets.zpack.my.id",
+        hostname: "assets.lestariproject.my.id",
         pathname: "/**",
       },
       {

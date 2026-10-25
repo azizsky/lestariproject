@@ -2,7 +2,7 @@
 
 import Link from "next/navigation"; // Jika pakai next/router atau next/link, sesuaikan dengan aslinya
 import { useRouter } from "next/navigation";
-
+import InstallAppButton from "./installappbutton";
 export default function AdminDashboardPage() {
   const router = useRouter();
 
@@ -65,12 +65,13 @@ export default function AdminDashboardPage() {
               Pilih kategori jenis acara atau layanan yang ingin kamu kelola
             </p>
           </div>
+          <InstallAppButton />
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-sm font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer"
           >
             🚪 Logout
-          </button>
+          </button> 
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

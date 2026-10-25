@@ -148,13 +148,13 @@ export default function SongsManagementPage() {
             ← Kembali ke Dashboard
           </Link>
           <span className="text-xs bg-blue-500/10 border border-blue-500/30 px-3 py-1 rounded-full uppercase tracking-wider text-blue-400 font-semibold">
-            Cloudflare R2 (preset-music/)
+            server storage (preset-music/) 
           </span>
         </div>
 
         <h1 className="text-3xl font-bold text-center mb-2">Kelola Musik & Lagu</h1>
         <p className="text-gray-400 text-center mb-10 text-sm md:text-base">
-          Tambah atau hapus koleksi lagu latar belakang di folder preset-music/ bucket zpack
+          Tambah atau hapus koleksi lagu latar belakang di folder preset-music/ server 
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 flex-col-reverse">
