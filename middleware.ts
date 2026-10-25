@@ -1,23 +1,43 @@
+
 import { NextResponse } from "next/server";
-
 import type { NextRequest } from "next/server";
+import {
+  verifyAdminSession,
+  ADMIN_SESSION_COOKIE,
+} from "@/lib/admin-auth";
 
-export function middleware(request: NextRequest) {
-  // Cek apakah user punya cookie 'admin_session'
-  const adminSession = request.cookies.get("admin_session")?.value;
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
 
-  const isDashboardRoute =
-    request.nextUrl.pathname.startsWith("/admin/dashboard");
+  if (!token) {
+    return NextResponse.redirect(
+      new URL("/admin/login", request.url)
+    );
+  }
 
-  // Jika coba masuk dashboard tapi tidak punya cookie session -> tendang ke login
-  if (isDashboardRoute && !adminSession) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+  const session = await verifyAdminSession(token);
+
+  if (!session) {
+    const response = NextResponse.redirect(
+      new URL("/admin/login", request.url)
+    );
+
+    response.cookies.set({
+      name: ADMIN_SESSION_COOKIE,
+      value: "",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+
+    return response;
   }
 
   return NextResponse.next();
 }
 
-// Hanya jalankan middleware ini pada jalur admin/dashboard
 export const config = {
   matcher: ["/admin/dashboard/:path*"],
 };

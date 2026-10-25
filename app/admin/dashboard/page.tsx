@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import InstallAppButton from "./installappbutton";
 export default function AdminDashboardPage() {
   const router = useRouter();
-
+  
   const categories = [
     {
       id: "wedding",
@@ -51,9 +51,27 @@ export default function AdminDashboardPage() {
     },
   ];
 
-  const handleLogout = () => {
-    router.push("/admin/login");
-  };
+ 
+const handleLogout = async () => {
+  try {
+    const response = await fetch("/api/admin/logout", {
+      method: "POST",
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Logout gagal: HTTP ${response.status}`);
+    }
+
+    router.replace("/admin/login");
+    router.refresh();
+  } catch (error) {
+    console.error("Logout gagal:", error);
+    alert("Logout gagal. Periksa koneksi dan coba lagi.");
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-[#070d19] text-white p-8">

@@ -1,14 +1,21 @@
+
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import {
+  createAdminSession,
+  ADMIN_SESSION_COOKIE,
+  ADMIN_SESSION_MAX_AGE,
+} from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
-async function queryRemoteD1(sql: string, params: any[] = []) {
+async function queryRemoteD1(sql: string, params: unknown[] = []) {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const databaseId = process.env.CLOUDFLARE_DATABASE_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 
   if (!accountId || !databaseId || !apiToken) {
-    throw new Error("Konfigurasi Cloudflare D1 (ACCOUNT_ID, DATABASE_ID, API_TOKEN) di .env.local belum lengkap!");
+    throw new Error("Konfigurasi Cloudflare D1 belum lengkap.");
   }
 
   const res = await fetch(
@@ -20,59 +27,79 @@ async function queryRemoteD1(sql: string, params: any[] = []) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ sql, params }),
+      cache: "no-store",
     }
   );
 
   const json = await res.json();
-  if (!json.success) {
-    throw new Error(json.errors?.[0]?.message || "Gagal query ke Cloudflare D1 REST API");
+
+  if (!res.ok || !json.success) {
+    throw new Error("Query Cloudflare D1 gagal.");
   }
-  
-  return json.result[0]?.results || [];
+
+  return json.result?.[0]?.results ?? [];
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { username, password } = body;
+    const { username, password } = body ?? {};
 
-    if (!username || !password) {
+    if (
+      typeof username !== "string" ||
+      typeof password !== "string" ||
+      !username.trim() ||
+      !password ||
+      username.length > 100 ||
+      password.length > 1024
+    ) {
       return NextResponse.json(
-        { success: false, message: "Username dan password wajib diisi!" },
+        { success: false, message: "Username atau password tidak valid." },
         { status: 400 }
       );
     }
 
-    const query = "SELECT * FROM admins WHERE username = ? AND password = ?";
-    const users = await queryRemoteD1(query, [username, password]);
+    const users = await queryRemoteD1(
+      "SELECT id, username, password FROM admins WHERE username = ? LIMIT 1",
+      [username.trim()]
+    );
 
-    if (!users || users.length === 0) {
+    const admin = users[0];
+
+    if (
+      !admin ||
+      typeof admin.password !== "string" ||
+      !(await bcrypt.compare(password, admin.password))
+    ) {
       return NextResponse.json(
-        { success: false, message: "Username atau password salah!" },
+        { success: false, message: "Username atau password salah." },
         { status: 401 }
       );
     }
 
-    // Buat response sukses dan set cookie autentikasi agar lolos dari redirect 307 middleware/dashboard
+    const token = await createAdminSession(admin.username);
+
     const response = NextResponse.json({
       success: true,
       message: "Login berhasil!",
     });
 
-    // Menaruh cookie sesi admin selama 1 hari
     response.cookies.set({
-      name: "admin_session",
-      value: "authenticated",
+      name: ADMIN_SESSION_COOKIE,
+      value: token,
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24, 
+      maxAge: ADMIN_SESSION_MAX_AGE,
     });
 
     return response;
-  } catch (error: any) {
-    console.error("Error Login:", error);
+  } catch (error) {
+    console.error("Login admin gagal:", error);
+
     return NextResponse.json(
-      { success: false, message: error.message || "Terjadi kesalahan pada server" },
+      { success: false, message: "Terjadi kesalahan pada server." },
       { status: 500 }
     );
   }
