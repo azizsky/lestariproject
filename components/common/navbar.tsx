@@ -80,6 +80,16 @@ export default function Navbar() {
     }
   };
 
+  // Daftar menu navigasi utama
+  const navLinks = [
+    { name: 'Template', href: '/template' },
+    { name: 'Harga & Paket', href: '/paket' },
+    { name: 'Musik Latar', href: '/music' },
+    { name: 'AI Assistant 🤖', href: '/ai-assistant' },
+    { name: 'Tentang', href: '/about' },
+    { name: 'Kontak', href: '/kontak' },
+  ];
+
   return (
     <>
       <header
@@ -87,7 +97,7 @@ export default function Navbar() {
           showNavbar ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-11 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
           {/* LOGO */}
           <Link href="/" className="flex items-center">
@@ -98,7 +108,7 @@ export default function Navbar() {
               width={150}
               height={45}
               priority
-              className="h-16 w-auto object-contain dark:hidden"
+              className="h-12 w-auto object-contain dark:hidden"
             />
 
             {/* Logo Dark Mode */}
@@ -108,69 +118,42 @@ export default function Navbar() {
               width={150}
               height={45}
               priority
-              className="hidden h-16 w-auto object-contain dark:block"
+              className="hidden h-12 w-auto object-contain dark:block"
             />
           </Link>
 
           {/* MENU DESKTOP */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/template"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Template
-            </Link>
+          <nav className="hidden md:flex items-center gap-2">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-blue-600 dark:bg-indigo-600 text-white font-bold shadow-sm'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
 
-            <Link
-              href="/paket"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Harga & Paket
-            </Link>
-
-            <Link
-              href="/music"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Musik Latar
-            </Link>
-
-            <Link
-              href="/ai-assistant"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              AI Assistant 🤖
-            </Link>
-
-            <Link
-              href="/about"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Tentang
-            </Link>
-
-            <Link
-              href="/kontak"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              Kontak
-            </Link>
-
-            {/* Tombol Dark/Light Desktop (Menggunakan Simbol Garis SVG) */}
+            {/* Tombol Dark/Light Desktop */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer flex items-center justify-center"
+              className="ml-2 p-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer flex items-center justify-center"
               title="Ganti Tema"
               aria-label="Ganti tema"
             >
               {darkMode ? (
-                /* Simbol Outline Matahari */
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="5" />
                   <path strokeLinecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                 </svg>
               ) : (
-                /* Simbol Outline Bulan Sabit */
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
                 </svg>
@@ -192,7 +175,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* OVERLAY SIDEBAR MOBILE (Z-index lebih tinggi) */}
+      {/* OVERLAY SIDEBAR MOBILE */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] md:hidden transition-opacity"
@@ -200,7 +183,7 @@ export default function Navbar() {
         />
       )}
 
-      {/* SIDEBAR MOBILE (Z-index paling tinggi, background solid absolut 100%) */}
+      {/* SIDEBAR MOBILE */}
       <div
         className={`fixed inset-y-0 right-0 w-72 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl z-[100] p-6 flex flex-col gap-6 transform transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -208,7 +191,7 @@ export default function Navbar() {
       >
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
           <span className="font-bold text-lg text-slate-900 dark:text-white">
-            Menu Zpack
+            Menu Lestari Project
           </span>
 
           <button
@@ -221,57 +204,27 @@ export default function Navbar() {
         </div>
 
         {/* Daftar Menu Navigasi Sidebar */}
-        <div className="flex flex-col gap-4">
-          <Link
-            href="/template"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            Template Undangan
-          </Link>
-
-          <Link
-            href="/paket"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            Harga & Paket
-          </Link>
-
-          <Link
-            href="/music"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            Musik Latar
-          </Link>
-
-          <Link
-            href="/ai-assistant"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            AI Assistant 🤖
-          </Link>
-
-          <Link
-            href="/about"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            Tentang Kami
-          </Link>
-
-          <Link
-            href="/kontak"
-            onClick={() => setIsOpen(false)}
-            className="text-base font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
-          >
-            Kontak
-          </Link>
+        <div className="flex flex-col gap-2">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition ${
+                  isActive
+                    ? 'bg-blue-600 dark:bg-indigo-600 text-white font-bold shadow-sm'
+                    : 'text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Bagian Bawah Sidebar: Tombol Tema (Simbol SVG Outline) */}
+        {/* Bagian Bawah Sidebar: Tombol Tema */}
         <div className="mt-auto pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-3">
           <button
             onClick={toggleTheme}
@@ -279,7 +232,7 @@ export default function Navbar() {
           >
             {darkMode ? (
               <>
-                <svg className="w-5 h-5 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="5" />
                   <path strokeLinecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                 </svg>
@@ -287,7 +240,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
                 </svg>
                 <span>Mode Gelap</span>

@@ -45,35 +45,18 @@ async function executeD1(sql: string, params: any[] = []) {
   return null;
 }
 
-// GET: Ambil Semua Paket
+// GET: Ambil Semua Paket (Murni dari Database)
 export async function GET() {
   try {
     const sql = "SELECT id, nama_paket, harga, deskripsi, fitur FROM packages ORDER BY harga ASC";
     const resultData = await executeD1(sql);
 
-    const mockPackages = [
-      {
-        id: "basic",
-        nama_paket: "Paket Basic",
-        harga: 50000,
-        deskripsi: "Masa aktif 1 bulan setelah hari-H.",
-        fitur: "Musik latar, Buku tamu dasar, Masa aktif 1 bulan",
-      },
-      {
-        id: "premium",
-        nama_paket: "Paket Premium",
-        harga: 100000,
-        deskripsi: "Masa aktif 3 bulan setelah hari-H.",
-        fitur: "Musik latar R2, RSVP lengkap, Custom domain, Masa aktif 3 bulan",
-      },
-    ];
-
-    const finalPackages = resultData && Array.isArray(resultData) && resultData.length > 0 ? resultData : mockPackages;
+    const finalPackages = Array.isArray(resultData) ? resultData : [];
 
     return NextResponse.json({
       success: true,
-      data: finalPackages,       // Mendukung jika frontend memanggil data.data
-      packages: finalPackages,   // Mendukung jika frontend memanggil data.packages
+      data: finalPackages,
+      packages: finalPackages,
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });

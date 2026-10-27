@@ -1,8 +1,10 @@
 import Link from "next/link";
-
+import Navbar from "@/components/common/navbar";
 export default function HomePage() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+
+      <Navbar />
       {/* Hero Section */}
       <section className="text-center flex flex-col items-center">
         <span className="bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6 border border-indigo-200 dark:border-indigo-800">
